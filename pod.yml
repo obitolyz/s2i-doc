@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mypod
+spec:
+  containers:
+    - name: test
+      image: obitoquilt/golang-s2i-builder:latest
+      args: ["-u", "bebe"]
+
