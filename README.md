@@ -22,3 +22,21 @@ Source-to-image (S2I) produces ready-to-run images by injecting source code into
 
 3. Runs the assemble script in the builder image
 4. Sets the run script in the builder image as the default command
+
+https://dev.to/jromero/creating-an-s2i-builder-for-go-and-a-runtime-image-5d56
+https://dev.to/jromero/creating-an-s2i-builder-for-go-and-a-runtime-image-5d56
+https://github.com/jromero/learning-s2i/tree/master/s2i-golang
+
+## runtime_image
+
+https://github.com/openshift/source-to-image/blob/30d81a9440f30b472bb32e592b12c1a83a396edd/docs/runtime_image.md
+
+- [ ] 日志获取
+- [ ] 状态管理
+- [ ] 为什么使用 s2i 而不是 Dockerfile ?
+- [ ] binary to image ? (kubesphere)
+- [ ] s2i 工具只指定 `CMD`，没有指定 `ENTRYPOINT`
+- [ ] 支持传入参数
+- [ ] s2i 参数含义
+- [ ] 支持生成 Dockerfile，实验性功能
+- [ ] 代码上传（参考kubesphere）
