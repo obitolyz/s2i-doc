@@ -1,12 +1,13 @@
 # golang-builder
-FROM golang:1.12
+FROM golang:1.18.10
 LABEL maintainer "Chris Collins <collins.christopher@gmail.com>"
 
 ENV CGO_ENABLED=0 \
     GOOS=linux \
     GOCACHE=/tmp \
     STI_SCRIPTS_PATH=/usr/libexec/s2i \
-    SOURCE_DIR=/go/src/app
+    SOURCE_DIR=/go/src/app \
+    APP_ROOT=/opt/app-root
 
 LABEL io.k8s.description="Builder image for compiling and testing Go applications" \
       io.k8s.display-name="golang-builder}" \
@@ -22,7 +23,11 @@ COPY ./s2i/bin/ ${STI_SCRIPTS_PATH}
 #
 # Allow random UIDs to write to the $SOURCE_DIR (for OKD/OpenShift)
 RUN mkdir -p $SOURCE_DIR \
-      && chmod 0777 $SOURCE_DIR
+      && chmod 755 $SOURCE_DIR \
+      && mkdir -p $APP_ROOT \
+      && chmod 755 $APP_ROOT \
+      && chown -R 1001:0 $SOURCE_DIR \
+      && chown -R 1001:0 $APP_ROOT
 
 WORKDIR $SOURCE_DIR
 
