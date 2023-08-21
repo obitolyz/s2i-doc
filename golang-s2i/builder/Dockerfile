@@ -10,7 +10,7 @@ ENV CGO_ENABLED=0 \
     APP_ROOT=/opt/app-root
 
 LABEL io.k8s.description="Builder image for compiling and testing Go applications" \
-      io.k8s.display-name="golang-builder}" \
+      io.k8s.display-name="golang-builder" \
       io.openshift.s2i.scripts-url=image://${STI_SCRIPTS_PATH}
       
 # Copy the s2i scripts into the golang image

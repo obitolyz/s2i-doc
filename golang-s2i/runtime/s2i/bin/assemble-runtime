@@ -1,0 +1,3 @@
+#!/bin/sh -e
+
+echo "Nothing special to do here..."
