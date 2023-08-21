@@ -31,6 +31,11 @@ https://github.com/jromero/learning-s2i/tree/master/s2i-golang
 
 https://github.com/openshift/source-to-image/blob/30d81a9440f30b472bb32e592b12c1a83a396edd/docs/runtime_image.md
 
+## binary to image
+https://www.kubesphere.io/zh/docs/v3.3/project-user-guide/image-builder/binary-to-image/
+
+https://github.com/kubesphere/s2i-binary-container/tree/master
+
 - [ ] 日志获取
 - [ ] 状态管理
 - [ ] 为什么使用 s2i 而不是 Dockerfile ?
