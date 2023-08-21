@@ -1,3 +1,3 @@
-module example.com/golang-s2i-example
+module s2i-go-example
 
 go 1.18
