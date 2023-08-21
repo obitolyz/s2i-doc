@@ -24,7 +24,7 @@ fi
 echo "---> Installing application source..."
 cp -Rf /tmp/src/. ./
 
-# error if `vendor` is not present
+# warning if `vendor` is not present
 if [[ ! -d ./vendor ]]; then
   echo "WARN: Package is missing dependencies."
 fi

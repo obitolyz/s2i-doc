@@ -16,7 +16,7 @@ LABEL io.k8s.description="Builder image for compiling and testing Go application
 # Copy the s2i scripts into the golang image
 # These scripts describe how to build & run the application, and extract artifacts 
 # for downstream builds
-COPY ./s2i/bin/ ${STI_SCRIPTS_PATH}
+COPY ./s2i/bin/ $STI_SCRIPTS_PATH
 
 # The $SOURCE_DIR is dependent on the upstream golang image, based on the 
 # $GOPATH, etc. variable set there
@@ -27,7 +27,9 @@ RUN mkdir -p $SOURCE_DIR \
       && mkdir -p $APP_ROOT \
       && chmod 755 $APP_ROOT \
       && chown -R 1001:0 $SOURCE_DIR \
-      && chown -R 1001:0 $APP_ROOT
+      && chown -R 1001:0 $APP_ROOT \
+      && chmod -R 755 $STI_SCRIPTS_PATH \
+      && chown -R 1001:0 $STI_SCRIPTS_PATH
 
 WORKDIR $SOURCE_DIR
 
