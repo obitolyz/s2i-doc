@@ -1,7 +1,7 @@
 ## 背景介绍
 提供`源码`或者`二进制文件`构造镜像的工具，减少开发者手动编写 Dockerfile 的需求。
 
-## S2I (source-to-image) 工具
+## S2I (source-to-image) 工具 ⭐️2.4k
 openshift 提供了源码构造镜像的工具（s2i），而 kubeshift 也是使用该工具（同时提供二进制文件构造镜像）
 
 ### S2I 的优点
@@ -147,7 +147,14 @@ echo "run binary with ARGS $ARGS"
 exec $APP_ROOT/bin/binary $ARGS
 ```
 
-## S2I 模板
+## kubesphere s2i-operator 模式
+通过 `CRD controller` 的方式创建 Job 来将源代码注入构建器镜像，执行相应的脚本文件，提交新镜像到镜像仓库。
+
+维护每个 Job 的状态和获取相关 pod 的日志信息
+
+![source-to-image](images/source-to-image.png)
+### S2I 模板
+通过 CR 定义某种语言或框架下的`构建器镜像`和`运行时镜像`。
 ```yaml
 apiVersion: devops.kubesphere.io/v1alpha1
 kind: S2iBuilderTemplate
@@ -164,12 +171,10 @@ spec:
   version: 0.0.1 # Builder template version
   description: "This is an S2I builder template for NGINX builds whose result can be run directly without any further application server." # Builder template description
 ```
-
+### 缺点：
+1. Job 所需的 s2irun 镜像由 kubesphere 二次开发 openshift 的 source-to-image，最近一次更新是 2 年前。
 - [ ] 日志获取（通过 pod log 获取）
 - [ ] 状态管理
-- [ ] s2i 工具只指定 `CMD`，没有指定 `ENTRYPOINT`
-- [ ] s2i 参数含义
-- [ ] 支持生成 Dockerfile，实验性功能
 - [ ] 代码上传（参考kubesphere）
 - [ ] s2irun 只支持 url 仓库吗？
 - [ ] docker 如何在 job 使用？
@@ -182,3 +187,4 @@ spec:
 5. [kubesphere/s2irun](https://github.com/kubesphere/s2irun/blob/master/docs/builder_image.md#s2i-builder-image-requirements)
 6. [自定义 S2I 模板](https://www.kubesphere.io/zh/docs/v3.3/project-user-guide/image-builder/s2i-templates/)
 7. [Creating an s2i builder for Go (and a runtime image)](https://dev.to/jromero/creating-an-s2i-builder-for-go-and-a-runtime-image-5d56)
+8. [kubesphere/s2ioperator](https://github.com/kubesphere/s2ioperator)
