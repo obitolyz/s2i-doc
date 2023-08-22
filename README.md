@@ -165,13 +165,14 @@ spec:
   description: "This is an S2I builder template for NGINX builds whose result can be run directly without any further application server." # Builder template description
 ```
 
-- [ ] 日志获取
+- [ ] 日志获取（通过 pod log 获取）
 - [ ] 状态管理
-- [ ] 为什么使用 s2i 而不是 Dockerfile ?
 - [ ] s2i 工具只指定 `CMD`，没有指定 `ENTRYPOINT`
 - [ ] s2i 参数含义
 - [ ] 支持生成 Dockerfile，实验性功能
 - [ ] 代码上传（参考kubesphere）
+- [ ] s2irun 只支持 url 仓库吗？
+- [ ] docker 如何在 job 使用？
 
 ## 参考资料
 1. [runtime-image](https://github.com/openshift/source-to-image/blob/30d81a9440f30b472bb32e592b12c1a83a396edd/docs/runtime_image.md)
