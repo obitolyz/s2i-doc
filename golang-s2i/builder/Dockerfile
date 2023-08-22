@@ -36,5 +36,4 @@ WORKDIR $SOURCE_DIR
 # Drop root (as is tradition)
 USER 1001
 
-
 CMD ["/usr/libexec/s2i/usage"]
