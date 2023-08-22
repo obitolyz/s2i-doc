@@ -4,6 +4,15 @@
 ## S2I (source-to-image) 工具
 openshift 提供了源码构造镜像的工具（s2i），而 kubeshift 也是使用该工具（同时提供二进制文件构造镜像）
 
+### S2I 的优点
+1. **简化构建流程**：S2I 脚本可以将编译、打包和其他构建步骤封装起来，使得用户只需要提供源代码就可以创建容器镜像。与 Dockerfile 相比，这种方式可以更简单地构建出应用的 Docker 镜像。
+
+2. **提高安全性**：在 Dockerfile 中，构建过程可能会包含运行在 root 用户权限下的命令，这可能会带来安全风险。与之相比，S2I 构建过程运行在一个隔离的容器中，这个容器是以普通用户权限运行，从而减少了潜在的安全问题。
+
+3. **支持增量构建**：S2I 支持增量构建，这意味着它可以重用之前构建的部分，从而加速构建过程。而 Dockerfile 缺乏这种增量构建的支持。
+
+4. **可重用和可共享**：S2I 脚本可以在不同的应用和项目之间重用，这使得构建流程可以更容易地在团队或者组织之间共享。
+
 ### S2I 基本原理
 S2I 工具的基本原理是运行构建器镜像（安装编译等依赖），拷贝源代码到构建器镜像里（默认目录为`/tmp/src`），运行 `assemble` 脚本，设置 `run` 脚本为启动命令，然后执行 `docker commit` 命令提交新的镜像。
 
@@ -16,7 +25,7 @@ S2I 一般包含以下文件：
 - s2i/bin/assemble 编译应用脚本
 - s2i/bin/usage 构建器的使用方法
 - s2i/bin/run 定义如何运行应用
-- s2i/bin/save-artifacts 用于保存构建制品的增量构建脚本
+- s2i/bin/save-artifacts 用于管理增量构建过程中的所有依赖的脚本
 
 ### 构建器 Dockerfile 文件
 ```Dockerfile
@@ -138,39 +147,37 @@ echo "run binary with ARGS $ARGS"
 exec $APP_ROOT/bin/binary $ARGS
 ```
 
-https://dev.to/jromero/creating-an-s2i-builder-for-go-and-a-runtime-image-5d56
-
-https://dev.to/jromero/creating-an-s2i-builder-for-go-and-a-runtime-image-5d56
-
-https://github.com/jromero/learning-s2i/tree/master/s2i-golang
+## S2I 模板
+```yaml
+apiVersion: devops.kubesphere.io/v1alpha1
+kind: S2iBuilderTemplate
+metadata:
+  labels:
+    controller-tools.k8s.io: "1.0"
+    builder-type.kubesphere.io/s2i: "s2i"
+  name: nginx-demo
+spec:
+  containerInfo:
+    - builderImage: kubespheredev/nginx-centos7-s2ibuilder-sample
+  codeFramework: nginx # type of code framework
+  defaultBaseImage: kubespheredev/nginx-centos7-s2ibuilder-sample # default Image Builder (can be replaced by a customized image)
+  version: 0.0.1 # Builder template version
+  description: "This is an S2I builder template for NGINX builds whose result can be run directly without any further application server." # Builder template description
+```
 
 - [ ] 日志获取
 - [ ] 状态管理
 - [ ] 为什么使用 s2i 而不是 Dockerfile ?
-- [ ] binary to image ? (kubesphere)
 - [ ] s2i 工具只指定 `CMD`，没有指定 `ENTRYPOINT`
-- [ ] 支持传入参数
 - [ ] s2i 参数含义
 - [ ] 支持生成 Dockerfile，实验性功能
 - [ ] 代码上传（参考kubesphere）
 
-
-Source-to-Image (S2I) 是一个用于构建容器镜像的工具，它主要是用于将源代码直接转化为 Docker 镜像。S2I 的设计使得它能够生成可重复构建、安全并且高效的容器镜像。
-
-使用脚本 (S2I 脚本) 而不是 Dockerfile 有以下几个主要的优势：
-
-1. **简化构建流程**：S2I 脚本可以将编译、打包和其他构建步骤封装起来，使得用户只需要提供源代码就可以创建容器镜像。与 Dockerfile 相比，这种方式可以更简单地构建出应用的 Docker 镜像。
-
-2. **提高安全性**：在 Dockerfile 中，构建过程可能会包含运行在 root 用户权限下的命令，这可能会带来安全风险。与之相比，S2I 构建过程运行在一个隔离的容器中，这个容器是以普通用户权限运行，从而减少了潜在的安全问题。
-
-3. **支持增量构建**：S2I 支持增量构建，这意味着它可以重用之前构建的部分，从而加速构建过程。而 Dockerfile 缺乏这种增量构建的支持。
-
-4. **可重用和可共享**：S2I 脚本可以在不同的应用和项目之间重用，这使得构建流程可以更容易地在团队或者组织之间共享。
-
-然而，尽管 S2I 提供了上述优势，但它并不是在所有情况下都是最佳选择。在某些情况下，使用 Dockerfile 可能会更有优势，例如当你需要更精细的控制构建过程，或者当你的应用需要特殊的构建步骤或者依赖时。
-
 ## 参考资料
 1. [runtime-image](https://github.com/openshift/source-to-image/blob/30d81a9440f30b472bb32e592b12c1a83a396edd/docs/runtime_image.md)
-2. [kubeshift/s2i-binary-container](https://github.com/kubesphere/s2i-binary-container/tree/master)
+2. [kubesphere/s2i-binary-container](https://github.com/kubesphere/s2i-binary-container/tree/master)
 3. [Source to Image：无需 Dockerfile 发布应用](https://www.kubesphere.io/zh/docs/v3.3/project-user-guide/image-builder/source-to-image/)
 4. [Binary to Image：发布制品到 Kubernetes](https://www.kubesphere.io/zh/docs/v3.3/project-user-guide/image-builder/binary-to-image/)
+5. [kubesphere/s2irun](https://github.com/kubesphere/s2irun/blob/master/docs/builder_image.md#s2i-builder-image-requirements)
+6. [自定义 S2I 模板](https://www.kubesphere.io/zh/docs/v3.3/project-user-guide/image-builder/s2i-templates/)
+7. [Creating an s2i builder for Go (and a runtime image)](https://dev.to/jromero/creating-an-s2i-builder-for-go-and-a-runtime-image-5d56)
