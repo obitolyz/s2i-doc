@@ -1,0 +1,5 @@
+#!/bin/sh -x
+
+echo "run binary with ARGS $ARGS"
+
+exec $APP_ROOT/bin/binary $ARGS
