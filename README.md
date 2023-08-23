@@ -147,13 +147,18 @@ echo "run binary with ARGS $ARGS"
 exec $APP_ROOT/bin/binary $ARGS
 ```
 
-## kubesphere s2i-operator 模式
+## kubesphere 源代码转化镜像页面
+![kubesphere](./images/kubesphere.png)
+
+
+## 方案设计
+### kubesphere s2i-operator 模式
 通过 `CRD controller` 的方式创建 Job 来将源代码注入构建器镜像，执行相应的脚本文件，提交新镜像到镜像仓库。
 
 维护每个 Job 的状态和获取相关 pod 的日志信息
 
 ![source-to-image](images/source-to-image.png)
-### S2I 模板
+#### S2I 模板
 通过 CR 定义某种语言或框架下的`构建器镜像`和`运行时镜像`。
 ```yaml
 apiVersion: devops.kubesphere.io/v1alpha1
@@ -171,13 +176,14 @@ spec:
   version: 0.0.1 # Builder template version
   description: "This is an S2I builder template for NGINX builds whose result can be run directly without any further application server." # Builder template description
 ```
-### 缺点：
+#### 缺点：
 1. Job 所需的 s2irun 镜像由 kubesphere 二次开发 openshift 的 source-to-image，最近一次更新是 2 年前。
-- [ ] 日志获取（通过 pod log 获取）
-- [ ] 状态管理
-- [ ] 代码上传（参考kubesphere）
-- [ ] s2irun 只支持 url 仓库吗？
-- [ ] docker 如何在 job 使用？
+2. 目前只支持源代码仓库地址
+
+## 原生 S2I
+前端页面选择构建器、源代码仓库地址或者源代码等信息后，cloud-s2i 服务创建 Job 并传递参数，Job 利用原生的 s2i 工具执行命令生成新的镜像，并推送到镜像仓库中。
+
+![native_s2i](images/native_s2i.png)
 
 ## 参考资料
 1. [runtime-image](https://github.com/openshift/source-to-image/blob/30d81a9440f30b472bb32e592b12c1a83a396edd/docs/runtime_image.md)
